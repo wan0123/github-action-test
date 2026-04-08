@@ -34,9 +34,9 @@ jobs:
           port: 22
           script: |
             # サーバー上のパス（~/プロジェクト名）を確認して修正してください
-            cd ~/github-action-text
+            cd ~/github-action-test
             git pull origin main
             npm install --omit=dev
             # Viteでビルドされたdist/index.mjsをPM2で再起動
-            pm2 restart github-action-text || pm2 start dist/index.mjs --name "github-action-text"
+            pm2 restart github-action-test || pm2 start dist/index.mjs --name "github-action-test"
             pm2 save
