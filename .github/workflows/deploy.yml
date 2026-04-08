@@ -1,0 +1,42 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main  # 自分の使用しているメインブランチ名に合わせてください
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Lightsail via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.LIGHTSAIL_IP }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          port: 22
+          script: |
+            # サーバー上のパス（~/プロジェクト名）を確認して修正してください
+            cd ~/my-site
+            git pull origin main
+            npm install --omit=dev
+            # Viteでビルドされたdist/index.mjsをPM2で再起動
+            pm2 restart my-app || pm2 start dist/index.mjs --name "my-app"
+            pm2 save
