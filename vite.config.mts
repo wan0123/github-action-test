@@ -1,5 +1,6 @@
 import {defineConfig} from "vite";
 // import {viteMockServe} from "vite-plugin-mock";
+// @ts-ignore
 import nodeExternals from "vite-plugin-node-externals";
 
 export default defineConfig(({mode}) => {
